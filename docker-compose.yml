@@ -1,0 +1,51 @@
+version: '3.3'
+
+networks:
+  library-net:
+    driver: bridge
+
+services:
+  library_app:
+    container_name: library_app
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+      - ./docker/php/php-fpm.d:/usr/local/etc/php-fpm:ro
+      - ./:/var/www
+      - ./docker/php/prod.ini:/usr/local/etc/php/conf.d/my.ini
+    depends_on:
+      - library_db
+    networks:
+      - library-net
+
+  library_nginx:
+    container_name: library_nginx
+    image: nginx:stable-alpine
+    ports:
+      - 8093:8093
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - .:/var/www
+    depends_on:
+      - library_app
+    networks:
+      - library-net
+
+  library_db:
+    container_name: library_db
+    image: mysql:8
+    ports:
+      - 13307:3306
+    volumes:
+      - ./docker/db/storage:/var/lib/mysql
+      - ./docker/db/backup:/var/db
+      - ./docker/db/conf.d:/etc/mysql/conf.d
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: library
+      MYSQL_USER: developer
+    networks:
+      - library-net
