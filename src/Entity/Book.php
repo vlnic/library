@@ -167,4 +167,3 @@ class Book
         $this->updated = time();
     }
 }
-

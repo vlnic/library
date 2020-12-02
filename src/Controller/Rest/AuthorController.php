@@ -29,7 +29,7 @@ class AuthorController
     }
 
     /**
-     * @Route(path="/{id}", name="rest_author-get")
+     * @Route(path="/{id}", name="rest_author-get", requirements={"id"="\d+"})
      * @param int $id
      * @return JsonResponse
      * @throws \App\Service\Exception\AuthorException
@@ -60,16 +60,13 @@ class AuthorController
 
     public function update()
     {
-
     }
 
     public function delete()
     {
-
     }
 
     public function join()
     {
-
     }
 }

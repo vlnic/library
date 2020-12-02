@@ -38,7 +38,7 @@ class BookController
     }
 
     /**
-     * @Route(path="/{id}", name="rest_get-book", methods={"GET"})
+     * @Route(path="/{id}", name="rest_get-book", methods={"GET"}, requirements={"id"="\d+"})
      * @param $id
      * @return JsonResponse
      * @throws \App\Service\Exception\BookServiceException
@@ -85,7 +85,7 @@ class BookController
         return new JsonResponse(
             array_map(
                 function ($b) {
-                   return [
+                    return [
                         'id' => $b->getId(),
                         'name' => $b->getName(),
                         'description' => $b->getDescription(),
@@ -101,13 +101,15 @@ class BookController
                                 ];
                             })->toArray()
                     ];
-                }, $books),
+                },
+                $books
+            ),
             200
         );
     }
 
     /**
-     * @Route(path="/create", name="rest_create-book" methods={"POST"})
+     * @Route(path="/create", name="rest_create-book", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
@@ -118,16 +120,13 @@ class BookController
 
     public function delete()
     {
-
     }
 
     public function update()
     {
-
     }
 
     public function join()
     {
-
     }
 }
