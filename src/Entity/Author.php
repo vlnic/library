@@ -172,4 +172,22 @@ class Author
     {
         $this->updated = time();
     }
+
+    /**
+     * @return string
+     */
+    public function getSecondName(): string
+    {
+        return $this->secondName;
+    }
+
+    /**
+     * @param string $secondName
+     * @return Author
+     */
+    public function setSecondName(string $secondName): self
+    {
+        $this->secondName = $secondName;
+        return $this;
+    }
 }
