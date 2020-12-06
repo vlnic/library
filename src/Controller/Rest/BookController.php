@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @Route("/api/book/")
@@ -31,14 +33,14 @@ class BookController
      * @param EventDispatcherInterface $dispatcher
      * @param BookService $service
      */
-    public function __controller(EventDispatcherInterface $dispatcher, BookService $service)
+    public function __construct(EventDispatcherInterface $dispatcher, BookService $service)
     {
         $this->dispatcher = $dispatcher;
         $this->service = $service;
     }
 
     /**
-     * @Route(path="/{id}", name="rest_get-book", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route(path="{id}", name="rest_get-book", methods={"GET"}, requirements={"id"="\d+"})
      * @param $id
      * @return JsonResponse
      * @throws \App\Service\Exception\BookServiceException
@@ -47,7 +49,10 @@ class BookController
     {
         $book = $this->service->find((int) $id);
         if (! $book instanceof Book) {
-            return new JsonResponse(['error' => sprintf('не удалось найти книгу с идентификатором \'%s\'', $id)], 404);
+            return new JsonResponse(
+                ['error' => sprintf('не удалось найти книгу с идентификатором \'%s\'', $id)],
+                404
+            );
         }
         return new JsonResponse([
             'id' => $book->getId(),
@@ -115,6 +120,14 @@ class BookController
      */
     public function create(Request $request)
     {
+        $validator = Validation::createValidator();
+        $input = $request->request->all();
+        $groups = new Assert\GroupSequence(['Default', 'custom']);
+        $constraint = new Assert\Collection([
+
+        ]);
+        $violations = $validator->validate($input, $groups, $constraint);
+
         return new JsonResponse([]);
     }
 
